@@ -20,7 +20,8 @@ interface Planet {
 }
 
 async function loadPlanetsData() {
-  const path = join('.', 'kepler_exoplanets_nasa.csv')
+  const dir = new URL('.', import.meta.url).pathname
+  const path = join(dir, 'kepler_exoplanets_nasa.csv')
   const file = await Deno.open(path)
 
   const bufReader = new BufReader(file)
@@ -62,7 +63,8 @@ async function loadPlanetsData() {
 }
 
 async function planetsByOrbitalPeriod() {
-  const path = join('.', 'kepler_exoplanets_nasa.csv')
+  const dir = new URL('.', import.meta.url).pathname
+  const path = join(dir, 'kepler_exoplanets_nasa.csv')
   const file = await Deno.open(path)
 
   const bufReader = new BufReader(file)
