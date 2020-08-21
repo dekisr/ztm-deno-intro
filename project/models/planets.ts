@@ -1,9 +1,4 @@
-import * as log from 'https://deno.land/std/log/mod.ts'
-import { join } from 'https://deno.land/std/path/mod.ts'
-import { BufReader } from 'https://deno.land/std/io/mod.ts'
-import { parse } from 'https://deno.land/std/encoding/csv.ts'
-
-import { pick } from 'https://deno.land/x/lodash@4.17.15-es/lodash.js'
+import { log, join, BufReader, parse, pick } from '../deps.ts'
 
 // interface Planet {
 //   [key: string]: string
@@ -61,4 +56,4 @@ async function loadPlanetsData() {
 planets = await loadPlanetsData()
 log.info(`${planets.length} habitable planets found!`)
 
-export const getAllPlanets = () => planets
+export const getAll = () => planets

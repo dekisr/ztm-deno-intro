@@ -1,5 +1,5 @@
 // @ts-nocheck
-let launches = []
+let launches
 
 const numberHeading = 'No.'.padStart(5)
 const dateHeading = 'Date'.padEnd(15)
@@ -16,8 +16,12 @@ function initValues() {
 }
 
 function loadLaunches() {
-  // TODO: Once API is ready.
-  // Load launches and sort by flight number.
+  return fetch('/launches')
+    .then((response) => response.json())
+    .then((launchesData) => {
+      launches = launchesData.sort((a, b) => a.flightNumber - b.flightNumber)
+    })
+    .catch((error) => console.log(error))
 }
 
 function loadPlanets() {
@@ -32,9 +36,13 @@ function loadPlanets() {
     .catch((error) => console.log(error))
 }
 
-function abortLaunch() {
-  // TODO: Once API is ready.
-  // Delete launch and reload launches.
+function abortLaunch(id) {
+  return fetch(`/launches/${id}`, {
+    method: 'DELETE',
+  })
+    .then(loadLaunches)
+    .then(listUpcoming)
+    .catch((error) => console.log(error))
 }
 
 function submitLaunch() {
@@ -42,24 +50,23 @@ function submitLaunch() {
   const launchDate = new Date(document.getElementById('launch-day').value)
   const mission = document.getElementById('mission-name').value
   const rocket = document.getElementById('rocket-name').value
-  const flightNumber = launches[launches.length - 1]?.flightNumber + 1 || 1
+  const flightNumber = launches[launches.length - 1].flightNumber + 1
 
-  const customers = ['NASA', 'ZTM']
-
-  launches.push({
-    target,
-    launchDate: launchDate / 1000,
-    mission,
-    rocket,
-    flightNumber,
-    customers,
-    upcoming: true,
+  return fetch('/launches', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      flightNumber,
+      launchDate: Math.floor(launchDate / 1000),
+      mission,
+      rocket,
+      target,
+    }),
   })
-
-  document.getElementById('launch-success').hidden = false
-
-  // TODO: Once API is ready.
-  // Submit above data to launch system and reload launches.
+    .then(loadLaunches)
+    .then(() => (document.getElementById('launch-success').hidden = false))
 }
 
 function listUpcoming() {
