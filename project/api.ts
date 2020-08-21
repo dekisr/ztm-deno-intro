@@ -17,6 +17,8 @@ router.get('/', (ctx) => {
 })
 
 router.get('/planets', (ctx) => {
+  // throw new Error('Sample Error')
+  ctx.throw(400, 'Sorry, planets aren\'t available!')
   ctx.response.body = planets.getAllPlanets()
 })
 

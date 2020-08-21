@@ -1,10 +1,36 @@
-import { Application, send } from 'https://deno.land/x/oak@v6.0.2/mod.ts'
 import * as log from 'https://deno.land/std/log/mod.ts'
+import { Application, send } from 'https://deno.land/x/oak@v6.0.2/mod.ts'
 
 import api from './api.ts'
 
 const app = new Application()
 const PORT = 8000
+
+await log.setup({
+  handlers: {
+    console: new log.handlers.ConsoleHandler('INFO'),
+  },
+  loggers: {
+    default: {
+      level: 'INFO',
+      handlers: ['console'],
+    },
+  },
+})
+
+app.addEventListener('error', (event) => {
+  log.error(event.message)
+  log.error(event.error)
+})
+
+app.use(async (ctx, next) => {
+  try {
+    await next()
+  } catch (error) {
+    ctx.response.body = 'Internal server errror.'
+    throw error
+  }
+})
 
 app.use(async (ctx, next) => {
   await next()
@@ -38,6 +64,7 @@ app.use(async (ctx) => {
 })
 
 if (import.meta.main) {
+  log.info(`Starting server on port ${PORT}...`)
   app.listen({
     port: PORT,
   })
